@@ -2,14 +2,18 @@ package kr.hs.emirim.dok96.simplediary;
 
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Calendar;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
+        import java.io.FileNotFoundException;
+        import java.io.FileOutputStream;
+        import java.io.IOException;
+        import java.util.Calendar;
+
+        import android.content.Context;
+        import android.support.v7.app.AppCompatActivity;
+        import android.os.Bundle;
+        import android.view.View;
+        import android.widget.Button;
+        import android.widget.DatePicker;
+        import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity {
     DatePicker datePic;
@@ -42,24 +46,32 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        butSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    FileOutputStream out = openFileOutput(fileName, Context.MODE_WORLD_WRITEABLE);
+                    String diaryContents = editDiary.getText().toString();
+                    out.write(diaryContents.getBytes());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
     String readDiary(String fileName) {
-
-        String diaryContents=null;
+        String diaryContents = null;
         try {
-            FileInputStream in= openFileInput(fileName);
-            byte[] txt=new byte[500];
+            FileInputStream in = openFileInput(fileName);
+            byte[] txt = new byte[500];
             in.read(txt);
             in.close();
-            diaryContents=new String(txt);
+            diaryContents = new String(txt);
             butSave.setText("수정하기");
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-           editDiary.setHint("읽어올 일기가 없음");
+        }catch (IOException e) {
+            editDiary.setHint("읽어올 일기가 없음");
             butSave.setText("새로 저장");
-
         }
-        return  diaryContents;
+        return diaryContents;
     }
-}
+}}
